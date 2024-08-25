@@ -1,18 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { CountUp } from 'countup.js';
-import { Modal, Button } from 'react-bootstrap';
-import './styles/Home.css';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import img3 from './images/about1.png'; // Ensure you have this image in the specified path
 import missionImg from './images/donation.jpg'; // Update with the correct path
+import './styles/Home.css';
 
 import Footer from './Footer'; // Import the Footer component
 
 const Home = () => {
+  const [metrics, setMetrics] = useState({
+    totalDonations: 0,
+    totalReceivers: 0,
+    totalVolunteers: 0,
+    inventoryStatus: { items: 0, categories: 0 },
+  });
+  const [pendingRequests, setPendingRequests] = useState([]);
+  const [completedRequests, setCompletedRequests] = useState([]);
+  const [donations, setDonations] = useState([]);
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+         // Fetch donations without auth headers
+      const donationsRes = await axios.get('http://localhost:3001/api/donation/donations');
+      
+      // Fetch requests without auth headers
+      const requestsRes = await axios.get('http://localhost:3001/api/donation/requests');
+      
+      // Fetch users without auth headers
+      const usersRes = await axios.get('http://localhost:3001/api/donation/users');
+        setDonations(donationsRes.data);
+        setRequests(requestsRes.data);
+
+        setMetrics({
+          totalDonations: donationsRes.data.length,
+          totalReceivers: requestsRes.data.length,
+          totalUsers: usersRes.data.length,
+          inventoryStatus: { items: donationsRes.data.length, categories: 10 }, // Adjust as necessary
+        });
+
+        setPendingRequests(requestsRes.data.filter(request => request.status === 'pending'));
+        setCompletedRequests(requestsRes.data.filter(request => request.status === 'complete'));
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const [showModal, setShowModal] = useState(false);
+// Get authentication status
+ const navigate = useNavigate();
+ const handleShow = () => {
+  const token = localStorage.getItem('token'); // Check if token is present in localStorage
 
-  const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  if (token) {
+    navigate('/donate'); // Redirect to donate page if token is present
+  } else {
+    navigate('/login'); // Redirect to login page if token is not present
+  }
+};
+const handleShowVolunteer = () => {
+  const token = localStorage.getItem('token'); // Check if token is present in localStorage
 
+  if (token) {
+    navigate('/volunteer'); // Redirect to volunteer page if token is present
+  } else {
+    navigate('/login'); // Redirect to login page if token is not present
+  }
+};
   const StatsSection = () => {
     const counters = useRef([]);
 
@@ -57,21 +116,18 @@ const Home = () => {
     return (
       <div className="stats-section">
         <div className="stat-item">
-          <span className="stat-number" data-target="5538" ref={el => counters.current[0] = el}>0</span>
-          <span className="stat-label">Donation</span>
+          <span className="stat-number" data-target={metrics.totalDonations} ref={el => counters.current[0] = el}>0</span>
+          <span className="stat-label">Total Donations</span>
         </div>
         <div className="stat-item">
-          <span className="stat-number" data-target="71" ref={el => counters.current[1] = el}>0</span>
-          <span className="stat-label">Fund Raised</span>
+          <span className="stat-number" data-target={metrics.totalReceivers} ref={el => counters.current[1] = el}>0</span>
+          <span className="stat-label">Total Requests</span>
         </div>
         <div className="stat-item">
-          <span className="stat-number" data-target="227" ref={el => counters.current[2] = el}>0</span>
-          <span className="stat-label">Donation</span>
+          <span className="stat-number" data-target={metrics.totalUsers} ref={el => counters.current[2] = el}>0</span>
+          <span className="stat-label">Total Users</span>
         </div>
-        <div className="stat-item">
-          <span className="stat-number" data-target="227" ref={el => counters.current[3] = el}>0</span>
-          <span className="stat-label">Donation</span>
-        </div>
+        
       </div>
     );
   };
@@ -135,45 +191,13 @@ const Home = () => {
 
       <section className="call-to-action">
         <h2>Let's Change the World With Humanity</h2>
-        <button>Become a Volunteer</button>
+        <button onClick={handleShowVolunteer}>Become a Volunteer</button>
       </section>
 
       <StatsSection />
 
       <Footer />
 
-      <Modal show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Donate</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <input type="text" className="form-control" id="name" placeholder="Enter your name" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" className="form-control" id="email" placeholder="Enter your email" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="amount">Donation Amount</label>
-              <input type="number" className="form-control" id="amount" placeholder="Enter donation amount" />
-            </div>
-            <label htmlFor="message">Message</label>
-              <textarea className="form-control" id="message" rows="3" placeholder="Enter a message"></textarea>
-            
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };

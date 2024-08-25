@@ -68,7 +68,7 @@ const RequestForm = () => {
       setSubmitted(true); // Trigger useEffect to reset form and close modal
 
       // Redirect to homepage
-      navigate('/homepage');
+      navigate('/');
     } catch (error) {
       console.error("Error submitting request", error);
       toast.error(error.response?.data?.message || "Error submitting request");

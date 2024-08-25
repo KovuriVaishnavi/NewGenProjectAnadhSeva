@@ -3,10 +3,12 @@ const Donation = require("../Models/donation.model");
 const ReceiverRequest = require("../Models/request.model");
 const Transaction = require("../Models/transaction.model");
 
+const User = require("../Models/user.model");
+const Request = require("../Models/request.model");
 const postDonation = errorHandler(async (req, res) => {
   const { foodItems, quantity, requestId, shelfLife, picture } = req.body;
   const user = req.user;
-  const donorId = req.user._id;
+  const donorId = user._id;
   const donarName = user.name;
   const location = user.location;
 
@@ -76,6 +78,22 @@ const postDonation = errorHandler(async (req, res) => {
   }
 
   const savedDonation = await newDonation.save();
+
+  if (requestId !== 0) {
+    // Create a transaction record if the donation is associated with a request
+    const request = await ReceiverRequest.findById(requestId);
+    const transaction = new Transaction({
+      dloc: location,
+      rloc: request.location,
+      donationId: savedDonation._id,
+      donarName,
+      requestId,
+      receiverName: request.receiverName,
+      donorId: donorId,
+    });
+    await transaction.save();
+  }
+
   res.status(201).json(savedDonation);
 });
 
@@ -84,7 +102,43 @@ const getDonation = errorHandler(async (req, res) => {
   res.json(donations);
 });
 
+
+
+const getAllDonations = async (req, res) => {
+  try {
+    const donations = await Donation.find();
+    console.log(donations);
+    res.status(200).json(donations);
+  } catch (error) {
+    console.error("Error fetching donations:", error);
+    res.status(500).json({ message: "Error fetching donations" });
+  }
+};
+
+const getAllRequests = async (req, res) => {
+  try {
+    const requests = await Request.find();
+    res.status(200).json(requests);
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+    res.status(500).json({ message: "Error fetching requests" });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};
+
 module.exports = {
   postDonation,
   getDonation,
+  getAllDonations,
+  getAllRequests,
+  getAllUsers,
 };
