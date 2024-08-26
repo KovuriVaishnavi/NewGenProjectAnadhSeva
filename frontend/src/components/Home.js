@@ -24,13 +24,13 @@ const Home = () => {
     const fetchData = async () => {
       try {
          // Fetch donations without auth headers
-      const donationsRes = await axios.get('http://localhost:3001/api/donation/donations');
+      const donationsRes = await axios.get('http://localhost:3001/api/metrics/donations');
       
       // Fetch requests without auth headers
-      const requestsRes = await axios.get('http://localhost:3001/api/donation/requests');
+      const requestsRes = await axios.get('http://localhost:3001/api/metrics/requests');
       
       // Fetch users without auth headers
-      const usersRes = await axios.get('http://localhost:3001/api/donation/users');
+      const usersRes = await axios.get('http://localhost:3001/api/metrics/users');
         setDonations(donationsRes.data);
         setRequests(requestsRes.data);
 

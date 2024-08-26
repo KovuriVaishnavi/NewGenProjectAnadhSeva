@@ -30,7 +30,7 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
   const user = {
     donorId: "123456", // Example donorId
     donorName: "John Doe", // Example donorName
-    location: "Some Location", // Example location
+    loc: "Some Location", // Example loc
   };
 
   const handleSubmit = async (e) => {

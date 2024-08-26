@@ -1,26 +1,30 @@
-import React from 'react';
-import './styles/Contact.css';
-import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import './styles/Contact.css';
 
 const Contact = () => {
     const send = async () => {
-        const response = await axios.post("http://localhost:3001/api/contact", {
-            name: document.querySelector("#name").value,
-            subject: document.querySelector("#subject").value,
-            message: document.querySelector("#message").value,
-            email: document.querySelector("#email").value
-        }, {
-            headers: {
-                Authorization: "Bearer " + localStorage.getItem("token")
-            }
-        });
+        try {
+            const response = await axios.post("http://localhost:3001/api/contact", {
+                name: document.querySelector("#name").value,
+                subject: document.querySelector("#subject").value,
+                message: document.querySelector("#message").value,
+                email: document.querySelector("#email").value
+            }, {
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                }
+            });
 
-        if(response.status !== 201) {
-            toast.error("Failed to post Request");
-            return;
+            if(response.status === 201) {
+                toast.success("Message successfully sent");
+            } else {
+                toast.error("Failed to send message");
+            }
+        } catch (error) {
+            toast.error("An error occurred while sending the message");
         }
-        toast.success("Message successfully sent");
     }
 
     return (
@@ -52,16 +56,16 @@ const Contact = () => {
                 </div>
             </div>
             <ToastContainer
-        position="bottom-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
         </div>
     );
 };
