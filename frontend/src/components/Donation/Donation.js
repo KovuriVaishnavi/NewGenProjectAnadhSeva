@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/Donation.css";
+import React, { useEffect, useState } from "react";
 import DonateForm from "../DonateForm/DonateForm";
 import Maps from "../Maps";
+import "../styles/Donation.css";
 
 const DonationComponent = () => {
   const [requests, setRequests] = useState([]);
@@ -10,6 +10,7 @@ const DonationComponent = () => {
   const [requestId, setRequestId] = useState(0);
   const [filter, setFilter] = useState("All");
   const [request, setRequest] = useState();
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -29,6 +30,21 @@ const DonationComponent = () => {
     };
 
     fetchRequests();
+
+    // Check if the user is on a mobile device
+    const checkMobile = () => {
+      const isMobileDevice = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+
+      if (isMobileDevice) {
+        alert("The map component is not visible on mobile devices. Please use a laptop or desktop for a better experience.");
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const haversineDistance = (coords1, coords2) => {
@@ -130,10 +146,12 @@ const DonationComponent = () => {
       </div>
       <div className="flex-donation">
         <div className="map">
-          <Maps
-            donorLocation={JSON.parse(localStorage.getItem("user")).location}
-            requests={filteredRequests}
-          />
+          
+            <Maps
+              donorLocation={JSON.parse(localStorage.getItem("user")).location}
+              requests={filteredRequests}
+            />
+
         </div>
         <div className="donation-requests">
           {filteredRequests.map((request) => (
