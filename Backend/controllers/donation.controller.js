@@ -5,8 +5,11 @@ const Transaction = require("../Models/transaction.model");
 
 const User = require("../Models/user.model");
 const Request = require("../Models/request.model");
+const path = require("path");
 const postDonation = errorHandler(async (req, res) => {
-  const { foodItems, quantity, requestId, shelfLife, picture } = req.body;
+  
+  const { foodItems, quantity, requestId, shelfLife } = req.body;
+  
   const user = req.user;
   const donorId = user._id;
   const donarName = user.name;
@@ -14,6 +17,16 @@ const postDonation = errorHandler(async (req, res) => {
 
   // Image validation (optional)
   // You can add checks for supported image formats and size limits
+  let pictureUrl = null;
+  
+
+  // Check if a file was uploaded
+  if (req.file) {
+    // Construct the URL for the image
+    pictureUrl = path.join(__dirname, '../images', req.file.filename); // Relative path to the image
+    
+  }
+
 
   let newDonation;
 
@@ -27,10 +40,7 @@ const postDonation = errorHandler(async (req, res) => {
       quantity,
       shelfLife,
       misc: true,
-      picture: {
-        data: Buffer.from(picture, 'base64'), // Assuming picture is sent as base64 string
-        contentType: req.body.contentType || 'image/unknown', // Set default content type
-      },
+      pictureUrl,
     });
   } else {
     // Handle the case where a specific request is associated with the donation
@@ -70,10 +80,7 @@ const postDonation = errorHandler(async (req, res) => {
       requestId,
       receiverId,
       status,
-      picture: {
-        data: Buffer.from(picture, 'base64'), // Assuming picture is sent as base64 string
-        contentType: req.body.contentType || 'image/unknown', // Set default content type
-      },
+      pictureUrl,
     });
   }
 
@@ -107,7 +114,6 @@ const getDonation = errorHandler(async (req, res) => {
 const getAllDonations = async (req, res) => {
   try {
     const donations = await Donation.find();
-    console.log(donations);
     res.status(200).json(donations);
   } catch (error) {
     console.error("Error fetching donations:", error);

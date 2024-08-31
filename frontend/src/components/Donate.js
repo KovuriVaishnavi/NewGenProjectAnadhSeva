@@ -68,8 +68,8 @@ const Donate = function () {
     }
   };
 
-  const openForm = (receiverId) => {
-    setFormData({ ...formData, receiverId });
+  const openForm = (requestId) => {
+    setFormData({ ...formData, requestId });
     setShowForm(true);
   };
 
@@ -107,7 +107,7 @@ const Donate = function () {
             </div>
           ))}
         </div>
-        {showForm && <DonateForm />}
+        {showForm && <DonateForm requestId={formData.requestId} setShowForm={setShowForm}/>}
       </div>
     </div>
   );

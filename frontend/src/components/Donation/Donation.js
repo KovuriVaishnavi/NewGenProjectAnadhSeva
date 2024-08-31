@@ -10,7 +10,6 @@ const DonationComponent = () => {
   const [requestId, setRequestId] = useState(0);
   const [filter, setFilter] = useState("All");
   const [request, setRequest] = useState();
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -30,21 +29,6 @@ const DonationComponent = () => {
     };
 
     fetchRequests();
-
-    // Check if the user is on a mobile device
-    const checkMobile = () => {
-      const isMobileDevice = window.innerWidth <= 768;
-      setIsMobile(isMobileDevice);
-
-      if (isMobileDevice) {
-        alert("The map component is not visible on mobile devices. Please use a laptop or desktop for a better experience.");
-      }
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-
-    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const haversineDistance = (coords1, coords2) => {

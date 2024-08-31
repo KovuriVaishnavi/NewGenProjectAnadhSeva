@@ -1,5 +1,4 @@
 const adminAuth = (req, res, next) => {
-  console.log("in admin auth");
   if (req.user && req.user.isAdmin) {
     next();
   } else {
