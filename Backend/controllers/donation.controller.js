@@ -23,7 +23,7 @@ const postDonation = errorHandler(async (req, res) => {
   // Check if a file was uploaded
   if (req.file) {
     // Construct the URL for the image
-    pictureUrl = path.join(__dirname, '../images', req.file.filename); // Relative path to the image
+    pictureUrl = path.join('/images', req.file.filename); // Relative path to the image
     
   }
 

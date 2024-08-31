@@ -1,17 +1,27 @@
 const Transaction = require("../Models/transaction.model");
 const Donation = require("../Models/donation.model");
+const donationModel = require("../Models/donation.model");
 
 const getAllTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find({ status: "pending" });
-    const donations = await Donation.find({ status: "pending" });
+    let transactions = await Transaction.find({ status: "pending" });
+    let donations = await Donation.find({ status: "pending" });
 
-    res.status(200).json({ transactions: transactions, donations:donations });
+    transactions = await Promise.all(transactions.map(async (transaction) => {
+      const donation = await Donation.findById(transaction.donationId);
+      return {
+        ...transaction.toObject(), 
+        pictureUrl: donation ? donation.pictureUrl : null 
+      };
+    }));
+
+    res.status(200).json({ transactions: transactions, donations: donations });
   } catch (error) {
     console.error("Error fetching transactions and donations:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 const updateTransaction = async (req, res) => {
   try {

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const errorHandler = require("./middleware/errorHandling.js");
+const path = require("path")
 const {adminAuth} = require("./middleware/adminAuth.js")
 
 const app = express();
@@ -29,6 +30,8 @@ mongoose
     .then(() => console.log("Connected to DataBase successfully..."));
 
 // Connecting API endpoints to routes
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use("/api/", homeRoutes);
 app.use("/api/auth", userRoutes);

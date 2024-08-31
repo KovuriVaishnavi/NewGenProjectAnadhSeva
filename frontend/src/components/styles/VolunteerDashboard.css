@@ -73,6 +73,7 @@
 }
 .volunteer .transaction {
   display: flex;
+  position: relative;
 }
 .volunteer .donar-details, .receiver-details {
   flex-grow: 1;
@@ -108,4 +109,45 @@
 .volunteer .donation button {
   margin-left: auto;
   border-radius: 5px;
+}
+.image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #1d7a33;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+.image-food {
+  position: fixed;
+  top: 100px;
+  bottom: 100px;
+  left: 100px;
+  right: 100px;
+  z-index: 1001;
+}
+.image-food img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(1, 1, 1, 0.7);
+  z-index: 1000;
+}
+.cross-image {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 40px;
+  padding: 20px 30px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 30px;
+  cursor: pointer;
 }

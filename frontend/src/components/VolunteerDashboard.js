@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "./styles/VolunteerDashboard.css";
 
 export default function VolunteerActiveRequests() {
+  const [showImage, setShowImage] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [allTransactions, setAllTransactions] = useState([]); // For preserving original transactions
   const [donations, setDonations] = useState([]);
@@ -31,6 +32,7 @@ export default function VolunteerActiveRequests() {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
+      
       setTransactions(response.data.transactions);
       setAllTransactions(response.data.transactions); // Save all transactions for filtering
       setDonations(response.data.donations);
@@ -180,6 +182,19 @@ export default function VolunteerActiveRequests() {
                     Address: {transaction.rloc.name}
                   </p>
                 </div>
+                <div className="image-btn" onClick={() => setShowImage(true)}>
+                <i className="fa-solid fa-camera"></i>
+                </div>
+                {showImage && (<div>
+                  <div className="overlay" onClick={() => setShowImage(false)}>
+                    <div className="cross-image">
+                    <i class="fa-solid fa-x"></i>
+                    </div>
+                  </div>
+                  <div className="image-food">
+                    <img src={`http://localhost:3001${transaction.pictureUrl}`} alt="Donation" />
+                  </div>
+                </div>)}
               </div>
             ))
           ) : (
