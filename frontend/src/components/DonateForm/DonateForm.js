@@ -20,48 +20,38 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
   const [foodItems, setFoodItems] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shelfLife, setShelfLife] = useState("");
-  const [location, setLocation] = useState("");
   const [picture, setPicture] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [showModal, setShowModal] = useState(true);
   const navigate = useNavigate();
 
-  // Dummy user data (for illustration, replace with actual user data from authentication context)
-  const user = {
-    donorId: "123456", // Example donorId
-    donorName: "John Doe", // Example donorName
-    loc: "Some Location", // Example loc
-  };
-
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
-
-    const formData = {
-      foodItems,
-      quantity,
-      shelfLife,
-      location,
-      picture, // Assuming picture is still sent to backend for future use
-      donorId: user.donorId,
-      donorName: user.donorName,
-      location: user.location,
-      requestId,
-    };
-
+    
+    const formData = new FormData(); // Create a new FormData object
+    formData.append("foodItems", foodItems);
+    formData.append("quantity", quantity);
+    formData.append("shelfLife", shelfLife);
+    formData.append("picture", picture); // Append the actual file
+    formData.append("requestId", requestId);
+    
+    
     try {
       const response = await axios.post(
         "http://localhost:3001/api/donation",
         formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         }
       );
-      if (!response.ok) {
+      if (response.status != 201) {
         console.log("error posting donation");
       }
-     alert("Donation submitted successfully! thank you for your generous donation");  
+      alert("Donation submitted successfully! thank you for your generous donation");  
       toast.success("Donation submitted successfully!");
       setShowModal(false);
       setShowForm(false); // Ensure the form is closed after submission
@@ -76,23 +66,22 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
     setFoodItems("");
     setQuantity("");
     setShelfLife("");
-    setLocation("");
     setPicture(null);
     setPreviewImage(null);
   };
 
   const handlePictureChange = (event) => {
     const file = event.target.files[0];
-    setPicture(file); // Store the file for potential backend submission
+    setPicture(file); // Store the actual file
 
     // Create a URL to display the image preview locally
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPreviewImage(reader.result);
-      setPicture(reader.result);
+      setPreviewImage(reader.result); // Only set the preview, not the file itself
     };
     reader.readAsDataURL(file);
-  };
+};
+
 
   return (
     <div className="container custom-modal">
@@ -136,18 +125,6 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
                     type="number"
                     value={shelfLife}
                     onChange={(e) => setShelfLife(e.target.value)}
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">
-                    <FaMapMarkerAlt className="me-2" /> Location:
-                  </label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
                     className="form-control"
                     required
                   />

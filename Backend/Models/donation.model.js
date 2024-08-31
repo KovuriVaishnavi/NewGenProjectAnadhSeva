@@ -25,10 +25,7 @@ const donationSchema = new mongoose.Schema(
     misc: { type: Boolean, default: false },
     requestId: { type: mongoose.Schema.Types.ObjectId, ref: "ReceiverRequest" },
     message: { type: String },
-    picture: {
-      data: Buffer,
-      contentType: String,
-    },
+    pictureUrl: { type: String }, // Field to store the image URL
   },
   { timestamps: true }
 );

@@ -39,7 +39,6 @@
 }
 .donation-requests {
     max-width: 600px;
-    width: 600px;
     align-items: center;
     overflow-y: scroll;
     height: 70vh;
@@ -61,3 +60,22 @@
 .flex-donation {
     display: flex;
 }
+@media (max-width: 1515px) {
+    .flex-donation {
+      flex-direction: column;
+    }
+  
+    .map {
+      width: 100%;
+      height: 50vh;
+    }
+  
+    .donation-requests {
+      width: 100%;
+      max-width: 1515px;
+    }
+    .donation-requests .donation-request {
+        padding: 50px;
+    }
+  }
+  
