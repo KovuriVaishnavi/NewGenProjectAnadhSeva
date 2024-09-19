@@ -28,7 +28,7 @@ ANADH SEVA is a food donation platform connecting donors, recipients, and volunt
 1. *Clone the repository:*
 
    bash
-   git clone https://github.com/yourusername/anadh-seva.git
+   git clone https://github.com/KovuriVaishnavi/Annseva.git
    
 
 2. *Install dependencies for both frontend and backend:*
@@ -94,7 +94,6 @@ This project was created to address the growing issue of food waste while simult
 For any inquiries or support, please reach out to the developer:
 
 - *Email:* gresh0121@gmail.com
-- *GitHub:* [Your GitHub Profile](https://github.com/yourusername)
 
 ---
 
