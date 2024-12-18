@@ -19,7 +19,6 @@ ANADH SEVA is a food donation platform connecting donors, recipients, and volunt
 
 - *Frontend:* React.js, React-Bootstrap, React-Leaflet
 - *Backend:* Node.js, Express.js, MongoDB
-- *API Integration:* OpenAI API for crop disease support (future feature)
 - *Styling:* Bootstrap, CSS
 - *Other Libraries:* Axios, Multer, React Icons
 
