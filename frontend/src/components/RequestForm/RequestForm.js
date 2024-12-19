@@ -3,12 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./RequestForm.css"; // Import the CSS file
+
 const RequestForm = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    receiverName: "john",
-    receiverId: "60d5f60b8f634d3f0c8b4568",
-    loc: "hyd",
+    receiverName: "",
+    receiverId: "",
+    loc: { name: "", lat: 0, long: 0 },
     foodItems: [],
     quantity: 0,
     status: "open",
@@ -34,9 +35,9 @@ const RequestForm = () => {
   useEffect(() => {
     if (submitted) {
       setFormData({
-        receiverName: "john",
-        receiverId: "60d5f60b8f634d3f0c8b4567",
-        loc: "hyd",
+        receiverName: "",
+        receiverId: "",
+        loc: { name: "", lat: 0, long: 0 },
         foodItems: [],
         quantity: 0,
         status: "open",
@@ -49,26 +50,33 @@ const RequestForm = () => {
     e.preventDefault();
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      const response = await axios.post(
-        "http://localhost:3001/api/request",
-        {
-          ...formData,
-          receiverId: user._id,
-          receiverName: user.name,
-          loc: user.location,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
+      if (user) {
+        // Ensure receiverId and receiverName are set dynamically from logged-in user
+        const response = await axios.post(
+          "http://localhost:9004/api/request",
+          {
+            ...formData,
+            receiverId: user._id,
+            receiverName: user.name,
+            loc: user.location || { name: "Unknown", lat: 0, long: 0 },
           },
-        }
-      );
-      console.log("Request submitted successfully", response.data);
-      toast.success("Your request has been submitted successfully! 🌟 Your generous request is now being processed. Thank you for your patience and support!");
-      setSubmitted(true); // Trigger useEffect to reset form and close modal
+          {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+          }
+        );
+        console.log("Request submitted successfully", response.data);
+        toast.success(
+          "Your request has been submitted successfully! 🌟 Your generous request is now being processed. Thank you for your patience and support!"
+        );
+        setSubmitted(true); // Trigger useEffect to reset form and close modal
 
-      // Redirect to homepage
-      navigate('/');
+        // Redirect to homepage
+        navigate('/');
+      } else {
+        toast.error("User not found. Please log in.");
+      }
     } catch (error) {
       console.error("Error submitting request", error);
       toast.error(error.response?.data?.message || "Error submitting request");
@@ -103,8 +111,7 @@ const RequestForm = () => {
               required
             />
           </label>
-          <input type="submit" className="btn btn-success">
-          </input>
+          <input type="submit" className="btn btn-success" />
         </form>
       </div>
     </div>

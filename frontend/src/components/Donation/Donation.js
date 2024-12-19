@@ -15,7 +15,7 @@ const DonationComponent = () => {
     const fetchRequests = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3001/api/request/pending",
+          "http://localhost:9004/api/request/pending",
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
@@ -130,12 +130,10 @@ const DonationComponent = () => {
       </div>
       <div className="flex-donation">
         <div className="map">
-          
-            <Maps
-              donorLocation={JSON.parse(localStorage.getItem("user")).location}
-              requests={filteredRequests}
-            />
-
+          <Maps
+            donorLocation={JSON.parse(localStorage.getItem("user")).location}
+            requests={filteredRequests}
+          />
         </div>
         <div className="donation-requests">
           {filteredRequests.map((request) => (

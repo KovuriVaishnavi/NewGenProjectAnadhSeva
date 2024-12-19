@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from "react";
@@ -26,20 +25,18 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    
     e.preventDefault();
-    
+
     const formData = new FormData(); // Create a new FormData object
     formData.append("foodItems", foodItems);
     formData.append("quantity", quantity);
     formData.append("shelfLife", shelfLife);
     formData.append("picture", picture); // Append the actual file
     formData.append("requestId", requestId);
-    
-    
+
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/donation",
+        "http://localhost:9004/api/donation",
         formData,
         {
           headers: {
@@ -51,11 +48,13 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
       if (response.status != 201) {
         console.log("error posting donation");
       }
-      alert("Donation submitted successfully! thank you for your generous donation");  
+      alert(
+        "Donation submitted successfully! thank you for your generous donation"
+      );
       toast.success("Donation submitted successfully!");
       setShowModal(false);
       setShowForm(false); // Ensure the form is closed after submission
-      navigate('/user-type-selection')
+      navigate("/user-type-selection");
       resetForm();
     } catch (error) {
       toast.error("Failed to submit donation.");
@@ -80,12 +79,18 @@ const DonateForm = ({ request, requestId, setShowForm }) => {
       setPreviewImage(reader.result); // Only set the preview, not the file itself
     };
     reader.readAsDataURL(file);
-};
-
+  };
 
   return (
     <div className="container custom-modal">
-      <Modal show={showModal} onHide={() => { setShowModal(false); setShowForm(false); navigate(`/donate`); }}>
+      <Modal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+          setShowForm(false);
+          navigate(`/donate`);
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Donate Food Items</Modal.Title>
         </Modal.Header>

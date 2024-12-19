@@ -27,12 +27,12 @@ export default function VolunteerActiveRequests() {
 
   const getTransactions = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/api/volunteer", {
+      const response = await axios.get("http://localhost:9004/api/volunteer", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      
+
       setTransactions(response.data.transactions);
       setAllTransactions(response.data.transactions); // Save all transactions for filtering
       setDonations(response.data.donations);
@@ -101,7 +101,7 @@ export default function VolunteerActiveRequests() {
   const acceptTransaction = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:3001/api/volunteer/${id}`,
+        `http://localhost:9004/api/volunteer/${id}`,
         {},
         {
           headers: {
@@ -183,18 +183,26 @@ export default function VolunteerActiveRequests() {
                   </p>
                 </div>
                 <div className="image-btn" onClick={() => setShowImage(true)}>
-                <i className="fa-solid fa-camera"></i>
+                  <i className="fa-solid fa-camera"></i>
                 </div>
-                {showImage && (<div>
-                  <div className="overlay" onClick={() => setShowImage(false)}>
-                    <div className="cross-image">
-                    <i class="fa-solid fa-x"></i>
+                {showImage && (
+                  <div>
+                    <div
+                      className="overlay"
+                      onClick={() => setShowImage(false)}
+                    >
+                      <div className="cross-image">
+                        <i class="fa-solid fa-x"></i>
+                      </div>
+                    </div>
+                    <div className="image-food">
+                      <img
+                        src={`http://localhost:9004${transaction.pictureUrl}`}
+                        alt="Donation"
+                      />
                     </div>
                   </div>
-                  <div className="image-food">
-                    <img src={`http://localhost:3001${transaction.pictureUrl}`} alt="Donation" />
-                  </div>
-                </div>)}
+                )}
               </div>
             ))
           ) : (

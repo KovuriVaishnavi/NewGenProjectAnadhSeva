@@ -14,16 +14,16 @@ const Log = () => {
     let endpoint;
     switch (type) {
       case "donor":
-        endpoint = "http://localhost:3001/api/request/donated";
+        endpoint = "http://localhost:9004/api/request/donated";
         break;
       case "receiver":
-        endpoint = "http://localhost:3001/api/request/received";
+        endpoint = "http://localhost:9004/api/request/received";
         break;
       case "volunteer":
-        endpoint = "http://localhost:3001/api/request/volunteered";
+        endpoint = "http://localhost:9004/api/request/volunteered";
         break;
       default:
-        endpoint = "http://localhost:3001/api/request/donated";
+        endpoint = "http://localhost:9004/api/request/donated";
         break;
     }
 
@@ -46,7 +46,7 @@ const Log = () => {
   const updateStatus = async (id) => {
     try {
       const response = await axios.put(
-        "http://localhost:3001/api/request/" + id,
+        "http://localhost:9004/api/request/" + id,
         {
           message: document.querySelector(".message").value,
         },
