@@ -1,13 +1,19 @@
 const Otp = require('../models/otp.model');
 const generateOtp = require('../utils/generateOtp');
-const sendEmail = require('../utils/sendEmail');
+const {sendEmail} = require('../utils/sendEmail');
 const { hashData, verifyHashedData } = require('../utils/hashData');
-const { AUTH_EMAIL } = process.env;
+const validator = require('validator'); // You might need to install it with npm install validator
+const jwt = require('jsonwebtoken'); // Install with npm install jsonwebtoken
 
+const JWT_SECRET = "Annadseva"
+const JWT_EXPIRATION_TIME= "2h";
+
+const { AUTH_EMAIL } = process.env;
+ 
 const sendOtp = async ({ email }) => {
   try {
-    if (!email) {
-      throw new Error("Provided invalid credentials");
+    if (!email || !validator.isEmail(email)) {
+      throw new Error("Invalid email address provided");
     }
 
     await Otp.deleteOne({ email });
@@ -39,12 +45,14 @@ const sendOtp = async ({ email }) => {
   }
 };
 
+
 const verifyOTP = async ({ email, otp }) => {
   try {
     if (!(email && otp)) {
       throw Error("Provide values for email and otp");
     }
 
+    // Find the OTP record by email
     const matchedOTPRecord = await Otp.findOne({ email });
 
     if (!matchedOTPRecord) {
@@ -53,17 +61,23 @@ const verifyOTP = async ({ email, otp }) => {
 
     const { expiresAt, otp: hashedOtp } = matchedOTPRecord;
 
+    // Check if OTP has expired
     if (expiresAt < Date.now()) {
       throw Error("OTP expired");
     }
 
+    // Verify the provided OTP matches the hashed one
     const validOTP = await verifyHashedData(otp, hashedOtp);
 
     if (!validOTP) {
       throw Error("Invalid OTP");
     }
 
-    return validOTP;
+    // Generate a JWT token upon successful OTP verification
+    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_TIME || '1h' });
+
+    // Return the token
+    return { token, message: "OTP verified successfully" };
   } catch (error) {
     console.error(error); // Log the error details
     throw new Error("Verification unsuccessful");
@@ -85,4 +99,4 @@ const deleteOtp = async (req, res) => {
   }
 };
 
-module.exports = { sendOtp, verifyOTP };
+module.exports = { sendOtp, verifyOTP,deleteOtp };

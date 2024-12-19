@@ -4,6 +4,7 @@ const Transaction = require("../Models/transaction.model.js");
 const User = require("../Models/user.model.js")
 const createReceiverRequest = async (req, res) => {
   const { receiverName, receiverId, loc, foodItems, quantity } = req.body;
+  console.log(req.body)
 
   try {
     const newRequest = new ReceiverRequest({
