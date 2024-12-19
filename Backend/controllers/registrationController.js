@@ -49,7 +49,8 @@ const registerUser = async (req, res) => {
 
     res.status(201).json({ 
       msg: "User created successfully", 
-      token 
+      token,
+      user
     });
 
   } catch (error) {
