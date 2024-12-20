@@ -22,6 +22,7 @@ const donationRoutes = require("./Routes/donation.route.js");
 const requestRoutes = require("./Routes/request.route.js");
 const adminRoutes = require("./Routes/admin.route.js");
 const volunteerRoutes = require("./Routes/volunteer.route.js");
+const resgisterRoutes = require("./Routes/registerRoutes.js")
 const contactController = require("./controllers/contact.controller.js")
 const { validateToken } = require("./middleware/validateToken");
 const metricsRoutes = require("./Routes/metrics.route.js");
@@ -37,6 +38,7 @@ app.use("/api/", homeRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/metrics", metricsRoutes);
 app.use('/api/otp', otpRoutes);
+app.use("/api/auth",resgisterRoutes)
 app.use('/api/otpVerify', validateOTP);
 app.post("/api/contact", contactController.postContactForm);
 app.get("/api/contact", contactController.getContacts);

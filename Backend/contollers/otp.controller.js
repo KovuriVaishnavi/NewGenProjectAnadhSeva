@@ -48,6 +48,7 @@ const sendOtp = async ({ email }) => {
 
 const verifyOTP = async ({ email, otp }) => {
   try {
+    console.log(email)
     if (!(email && otp)) {
       throw Error("Provide values for email and otp");
     }
@@ -72,12 +73,10 @@ const verifyOTP = async ({ email, otp }) => {
     if (!validOTP) {
       throw Error("Invalid OTP");
     }
-
-    // Generate a JWT token upon successful OTP verification
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_TIME || '1h' });
-
+ 
     // Return the token
-    return { token, message: "OTP verified successfully" };
+    return {  message: "OTP verified successfully" };
+    
   } catch (error) {
     console.error(error); // Log the error details
     throw new Error("Verification unsuccessful");

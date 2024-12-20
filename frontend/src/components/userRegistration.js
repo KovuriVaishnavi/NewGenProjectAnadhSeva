@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserRegistration.css"; // Ensure this CSS file is imported for styling
 
@@ -8,7 +9,13 @@ const UserRegistration = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [formData, setFormData] = useState({
+    name: "",
     name: "",
     email: "",
     phone: "",
@@ -25,7 +32,20 @@ const UserRegistration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSendingOtp(true);
+    setIsSendingOtp(true);
     try {
+      const response = await fetch(
+        "http://localhost:9004/api/otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      setIsSendingOtp(false);
+      if (response.status === 200) {
       const response = await fetch(
         "http://localhost:9004/api/otp",
         {
@@ -44,10 +64,40 @@ const UserRegistration = () => {
       }
     } catch (error) {
       setIsSendingOtp(false);
+      setIsSendingOtp(false);
       console.error("Error:", error);
       alert("Error sending OTP");
     }
   };
+
+  useEffect(() => {
+    const getLocation = () => {
+      setIsLoading(true);
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setError(null);
+            setIsLoading(false);
+          },
+          (error) => {
+            setError(error.message);
+            setIsLoading(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          }
+        );
+      } else {
+        setError("Geolocation is not supported by your browser.");
+        setIsLoading(false);
+      }
+    };
+    getLocation();
+  }, []);
 
   useEffect(() => {
     const getLocation = () => {

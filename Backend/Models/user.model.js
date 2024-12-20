@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     lat: { type: Number, required: true },
     long: { type: Number, required: true },
   },
-  phone: { type: Number, required: true },
+  phone: { type: String, required: true },
   isAdmin: { type: Boolean, default: false },
 });
 
