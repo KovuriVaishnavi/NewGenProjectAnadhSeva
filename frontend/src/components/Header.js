@@ -36,9 +36,9 @@ const Header = () => {
                   <li>
                     <Link to="/admin">Admin Panel</Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link to="/user-requests">User Requests</Link>
-                  </li>
+                  </li> */}
                 </>
               ) : (
                 <>

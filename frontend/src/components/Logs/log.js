@@ -43,12 +43,22 @@ const Log = () => {
     console.log("History of requests:", requests);
   };
 
-  const updateStatus = async (id) => {
+  const updateStatus = async (id, message) => {
     try {
-      const response = await axios.put(
+      // Optimistically update the request's message and status
+      setRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request._id === id
+            ? { ...request, message: message, status: "completed" }
+            : request
+        )
+      );
+
+      // Make the API request to update the status
+      await axios.put(
         "http://localhost:9004/api/request/" + id,
         {
-          message: document.querySelector(".message").value,
+          message: message,
         },
         {
           headers: {
@@ -56,8 +66,10 @@ const Log = () => {
           },
         }
       );
-    } catch {
-      console.error("Error updating status of request");
+    } catch (error) {
+      console.error("Error updating status of request:", error);
+      // Optionally, revert optimistic update on error
+      fetchRequests();
     }
   };
 
@@ -124,7 +136,14 @@ const Log = () => {
                         </td>
                         <td>
                           {request.status !== "completed" ? (
-                            <button onClick={() => updateStatus(request._id)}>
+                            <button
+                              onClick={() =>
+                                updateStatus(
+                                  request._id,
+                                  document.querySelector(".message").value
+                                )
+                              }
+                            >
                               Received
                             </button>
                           ) : (
@@ -142,24 +161,6 @@ const Log = () => {
           </tbody>
         </table>
       </div>
-
-      {/* <ul>
-        {requests.map((request) => (
-          <li key={request._id}>
-            {request.donarName ? (
-              <span> {request.donarName}</span>
-            ) : request.receiverName ? (
-              <span> {request.receiverName}</span>
-            ) : (
-              <span>
-                Volunteer: {request.volunteerId} - Donor: {request.donarName} -
-                Receiver: {request.receiverName}
-              </span>
-            )}
-            : {request.loc} - Status: {request.status}
-          </li>
-        ))}
-      </ul> */}
     </div>
   );
 };

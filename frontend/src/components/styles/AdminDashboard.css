@@ -56,8 +56,9 @@
 /* Chart Section */
 .chart-section {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping of charts */
+    justify-content: space-between; /* Distribute space evenly */
+    gap: 20px; /* Add space between charts */
     margin-top: 30px;
 }
 
@@ -65,6 +66,8 @@
     color: #2e7d32; /* Dark green */
     margin-bottom: 20px;
     font-size: 2em;
+    width: 100%;
+    text-align: center;
 }
 
 .chart-wrapper {
@@ -73,8 +76,8 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin: 20px 0;
-    width: 80%;
+    width: calc(33% - 20px); /* Take up 1/3 of the available width */
+    max-width: 100%; /* Ensure charts don't exceed container width */
 }
 
 /* Table Section */
@@ -119,13 +122,69 @@
     background-color: #e0e0e0;
 }
 
-/* Responsive Design */
+/* Responsive Design for Charts and Layout */
 @media (max-width: 768px) {
+    .dashboard-metrics {
+        flex-direction: column;
+        align-items: center;
+    }
+
     .metric-card {
         flex: 1 1 100%;
+        margin: 10px 0;
+    }
+
+    .chart-section h2 {
+        font-size: 1.5em;
     }
 
     .chart-wrapper {
-        width: 100%;
+        width: 100%; /* Full width on smaller screens */
+        margin-bottom: 20px;
+    }
+
+    .user-table th, .user-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .user-table th {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-wrapper {
+        padding: 15px;
+    }
+
+    .user-table th, .user-table td {
+        font-size: 12px;
+    }
+
+    .user-table th {
+        font-size: 14px;
+    }
+}
+
+/* Large Screen Adjustments */
+@media (min-width: 1200px) {
+    /* Ensure graphs are laid out properly on larger screens */
+    .chart-wrapper {
+        width: calc(33% - 20px); /* Three charts in a row */
+    }
+
+    /* Keep the chart section organized and prevent overflow */
+    .chart-section {
+        flex-wrap: wrap;
+        gap: 30px; /* Space between charts */
+    }
+
+    .dashboard-metrics {
+        justify-content: space-between;
+    }
+
+    .metric-card {
+        flex: 1 1 30%;
     }
 }
