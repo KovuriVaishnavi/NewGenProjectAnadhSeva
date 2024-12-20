@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserRegistration.css"; // Ensure this CSS file is imported for styling
 
 const UserRegistration = () => {
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [formData, setFormData] = useState({
-    organisationName: "",
+    name: "",
     email: "",
     phone: "",
     address: "",
@@ -19,37 +24,94 @@ const UserRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSendingOtp(true);
     try {
-      const response = await fetch("http://localhost:9004/api/otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
+      const response = await fetch(
+        "http://localhost:9004/api/otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      setIsSendingOtp(false);
+      if (response.status === 200) {
         setIsOtpSent(true);
       } else {
         alert("Error sending OTP");
       }
     } catch (error) {
+      setIsSendingOtp(false);
       console.error("Error:", error);
       alert("Error sending OTP");
     }
   };
 
+  useEffect(() => {
+    const getLocation = () => {
+      setIsLoading(true);
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setError(null);
+            setIsLoading(false);
+          },
+          (error) => {
+            setError(error.message);
+            setIsLoading(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          }
+        );
+      } else {
+        setError("Geolocation is not supported by your browser.");
+        setIsLoading(false);
+      }
+    };
+    getLocation();
+  }, []);
+
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:9004/api/otpverify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: formData.email, otp }),
-      });
+      let response = await fetch(
+        "http://localhost:9004/api/otpVerify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: formData.email, otp }),
+        }
+      );
+
       if (response.ok) {
-        navigate("/user-type-selection");
+        const loca = { lat: latitude, long: longitude };
+
+        response = await fetch(
+          "http://localhost:9004/api/auth/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ ...formData, ...loca }),
+          }
+        );
+
+        if (response.ok) {
+          navigate("/login");
+        } else {
+          const result = await response.json();
+          alert(result.msg || "Error creating user");
+        }
       } else {
         alert("Invalid OTP");
       }
@@ -62,54 +124,75 @@ const UserRegistration = () => {
   return (
     <div className="registration-form-container">
       {!isOtpSent ? (
-        <form onSubmit={handleSubmit} className="registration-form">
-          <h2>User Registration</h2>
-          <label>
-            Organisation Name / Name:
-            <input
-              type="text"
-              placeholder="Enter Your Name"
-              name="organisationName"
-              value={formData.organisationName}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Email:
-            <input
-              type="email"
-              placeholder="Enter Your Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Phone:
-            <input
-              type="text"
-              placeholder="Enter Your Mobile Number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <label>
-            Address:
-            <input
-              type="text"
-              placeholder="Enter Your Address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <button type="submit">Register</button>
-        </form>
+        <>
+          {isSendingOtp ? (
+            <div className="loading-message">
+              <div className="spinner"></div>
+              <h2>⏳ Just a Moment!</h2>
+              <p>
+                Good things take time. Your OTP is on its way and will arrive
+                shortly...
+              </p>
+
+              <p>Your patience is appreciated!</p>
+              <button
+                className="refresh-button"
+                onClick={() => window.location.reload()}
+              >
+                Refresh
+              </button>
+            </div>
+          ) : (
+              <form onSubmit={handleSubmit} className="registration-form">
+                <h2>User Registration</h2>
+                <label>
+                  Organisation Name / Name:
+                  <input
+                    type="text"
+                    placeholder="Enter Your Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Email:
+                  <input
+                    type="email"
+                    placeholder="Enter Your Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Phone:
+                  <input
+                    type="text"
+                    placeholder="Enter Your Mobile Number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <label>
+                  Address:
+                  <input
+                    type="text"
+                    placeholder="Enter Your Address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+                <button type="submit">Register</button>
+              </form>
+          )}
+        </>
       ) : (
         <form onSubmit={handleOtpSubmit} className="otp-form">
           <label>

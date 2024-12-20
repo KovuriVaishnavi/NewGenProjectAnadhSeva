@@ -5,7 +5,7 @@ import './UserTypeSelection.css'; // Import CSS for styling
 
 const UserTypeSelection = () => {
   const navigate = useNavigate();
-
+  console.log("token", localStorage.getItem("token"));
   const handleSelection = (userType) => {
     if (userType === 'volunteer') {
       navigate(`/volunteer/dashboard`);

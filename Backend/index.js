@@ -4,7 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const errorHandler = require("./middleware/errorHandling.js");
 const path = require("path")
-const {adminAuth} = require("./middleware/adminAuth.js")
+const { adminAuth } = require("./middleware/adminAuth.js")
 
 const app = express();
 app.use(cors());
@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 const port = process.env.PORT || 3001;
-const url= process.env.MONGO_URL;
+const url = process.env.MONGO_URL;
 const otpRoutes = require('./Routes/otpRoutes'); // Import the OTP routes
 const validateOTP = require('./Routes/validateRoute'); // Import the OTP verification routes
 
@@ -26,8 +26,8 @@ const contactController = require("./controllers/contact.controller.js")
 const { validateToken } = require("./middleware/validateToken");
 const metricsRoutes = require("./Routes/metrics.route.js");
 mongoose
-    .connect(url)
-    .then(() => console.log("Connected to DataBase successfully..."));
+  .connect(url)
+  .then(() => console.log("Connected to DataBase successfully..."));
 
 // Connecting API endpoints to routes
 

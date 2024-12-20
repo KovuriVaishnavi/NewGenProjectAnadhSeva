@@ -5,9 +5,9 @@ import "./styles/VolunteerDashboard.css";
 
 export default function VolunteerActiveRequests() {
   const [showImage, setShowImage] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null); // Track the current image source
   const [transactions, setTransactions] = useState([]);
-  const [allTransactions, setAllTransactions] = useState([]); // For preserving original transactions
-  const [donations, setDonations] = useState([]);
+  const [allTransactions, setAllTransactions] = useState([]);
   const [location, setLocation] = useState({
     lat: 0,
     long: 0,
@@ -34,34 +34,25 @@ export default function VolunteerActiveRequests() {
       });
 
       setTransactions(response.data.transactions);
-      setAllTransactions(response.data.transactions); // Save all transactions for filtering
-      setDonations(response.data.donations);
+      setAllTransactions(response.data.transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
   };
 
-  function haversineDistance(lat1, lon1, lat2, lon2) {
-    // Convert degrees to radians
-    function toRadians(degrees) {
-      return degrees * (Math.PI / 180);
-    }
-
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
     const R = 6371; // Radius of the Earth in kilometers
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
-
     const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLat / 2) ** 2 +
       Math.cos(toRadians(lat1)) *
         Math.cos(toRadians(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
+        Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    console.log(R * c);
     return R * c; // Distance in kilometers
-  }
+  };
 
   const filterTransactions = (maxDistance) => {
     const filteredTransactions = allTransactions.filter((transaction) => {
@@ -110,20 +101,15 @@ export default function VolunteerActiveRequests() {
         }
       );
 
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        setTransactions((prevTransactions) =>
+          prevTransactions.filter((transaction) => transaction._id !== id)
+        );
+
+        toast.success("Request accepted successfully");
+      } else {
         toast.error("Could not take request");
-        return;
       }
-
-      setTransactions((prevTransactions) =>
-        prevTransactions.map((transaction) =>
-          transaction._id === id
-            ? { ...transaction, status: "accepted" }
-            : transaction
-        )
-      );
-
-      toast.success("Request accepted successfully");
     } catch (error) {
       console.error("Error accepting transaction:", error);
       toast.error("Could not take request");
@@ -182,24 +168,32 @@ export default function VolunteerActiveRequests() {
                     Address: {transaction.rloc.name}
                   </p>
                 </div>
-                <div className="image-btn" onClick={() => setShowImage(true)}>
+                <div
+                  className="image-btn"
+                  onClick={() => {
+                    setImageSrc(
+                      `http://localhost:9004${transaction.pictureUrl}`
+                    );
+                    setShowImage(true);
+                  }}
+                >
                   <i className="fa-solid fa-camera"></i>
                 </div>
-                {showImage && (
+                {showImage && imageSrc && (
                   <div>
                     <div
                       className="overlay"
-                      onClick={() => setShowImage(false)}
+                      onClick={() => {
+                        setShowImage(false);
+                        setImageSrc(null);
+                      }}
                     >
                       <div className="cross-image">
-                        <i class="fa-solid fa-x"></i>
+                        <i className="fa-solid fa-x"></i>
                       </div>
                     </div>
                     <div className="image-food">
-                      <img
-                        src={`http://localhost:9004${transaction.pictureUrl}`}
-                        alt="Donation"
-                      />
+                      <img src={imageSrc} alt="Donation" />
                     </div>
                   </div>
                 )}
@@ -207,22 +201,6 @@ export default function VolunteerActiveRequests() {
             ))
           ) : (
             <p>No transactions available</p>
-          )}
-        </div>
-        <div className="instant-donations">
-          <h2>Donations</h2>
-          {donations.length > 0 ? (
-            donations.map((donation) => (
-              <div key={donation._id} className="donation">
-                <div className="donation-values">
-                  <p>DonarName: {donation.donarName}</p>
-                  <p>Address: {donation.location.name}</p>
-                </div>
-                <button className="accept-button">Accept</button>
-              </div>
-            ))
-          ) : (
-            <p>No available Donations</p>
           )}
         </div>
       </div>
