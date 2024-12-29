@@ -13,11 +13,13 @@ import Home from './components/Home';
 import Homepage from './components/Homepage';
 import Login from './components/Login';
 import Log from './components/Logs/log';
+import DonorProfile from './components/Profiles/DonorProfile';
+import RecieverProfile from './components/Profiles/RecieverProfile';
+import VolunteerProfile from './components/Profiles/VolunteerProfile';
 import RequestForm from './components/RequestForm/RequestForm';
 import UserRegistration from './components/userRegistration';
 import UserTypeSelection from './components/UserTypeSelection';
 import VolunteerActiveRequests from './components/VolunteerDashboard';
-
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +38,9 @@ function App() {
           <Route path="/donate" element={<Donation />} />
           <Route path="/request" element={<RequestForm />} />
           <Route path="/log" element={<Log />} />
+          <Route path="/donorprofile" element={<DonorProfile />} />
+          <Route path="/recieverprofile" element={<RecieverProfile />} />
+          <Route path="/volunteerprofile" element={<VolunteerProfile />} />
         </Routes>
         <ToastContainer /> {/* Add ToastContainer here */}
       </div>

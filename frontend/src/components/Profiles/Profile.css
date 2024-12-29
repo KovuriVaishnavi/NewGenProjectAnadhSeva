@@ -1,0 +1,81 @@
+.profile {
+    max-width: 400px; /* Set a maximum width for the profile */
+    margin: 5% auto; /* Center the profile component */
+    padding: 40px 20px;
+    background-color: rgba(255,255,255,0.8); /* Green background for profile box */
+    color:black; /* Text color */
+    text-align: center;
+    border-radius: 10px; /* Rounded corners for profile box */
+    box-shadow: 0 0 10px rgba(1,0,0,0.4);
+    font-size:16px
+
+}
+
+.profile-avatar {
+    width: 120px; /* Set width for avatar */
+    height: 120px; /* Set height for avatar */
+    border-radius: 50%; /* Make it circular */
+    background-color: #28a745; /* White background for avatar */
+    color:white; /* Green text colors for initials */
+    font-size: 36px; /* Font size for initials */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px; /* Center avatar and add margin below */
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 10, 3, 0.8);
+}
+
+.profile h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+    color:green
+}
+
+.profile-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white; /* White background for fields */
+    border-radius: 5px;
+   
+}
+
+.profile-field label {
+    font-size: 16px;
+}
+
+.profile-field span,
+.profile-field input{
+    font-size: 16px;
+}
+
+.profile-field input{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+
+.edit-button {
+    background-color: #28a745; /* Green background for buttons */
+    color: white; /* White text color for buttons */
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.edit-button:hover {
+    background-color: #218838; /* Darker green shade for hover */
+}
+
+.error {
+   color: red; /* Red color for error messages */
+   font-size: 16px; 
+   margin-left: 10px; 
+   display:block; /* Ensure error messages are displayed as block elements */
+}
